@@ -1,0 +1,4 @@
+https://data.caltech.edu/records/33qmq-a2n15/files/test.tar.gz?download=1
+https://data.caltech.edu/records/33qmq-a2n15/files/test_cropped.tar.gz?download=1
+https://data.caltech.edu/records/33qmq-a2n15/files/train.tar.gz?download=1
+https://data.caltech.edu/records/33qmq-a2n15/files/train_cropped.tar.gz?download=1
