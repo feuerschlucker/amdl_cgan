@@ -11,7 +11,7 @@ data/
 *.tmp
 *.bak
 *~
-
+*.npz
 .vscode/
 .idea/
 
