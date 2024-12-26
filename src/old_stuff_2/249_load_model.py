@@ -24,7 +24,7 @@ def generate_latent_points(latent_dim, n_samples, n_classes=10):
 # ship, truck
 
 # load model
-model = load_model('cifar_conditional_generator_500epochs.keras')
+model = load_model('models/cifar_conditional_generator_1epochs.keras')
 
 # generate multiple images
 
@@ -43,6 +43,6 @@ def show_plot(examples, n):
 		plt.subplot(n, n, 1 + i)
 		plt.axis('off')
 		plt.imshow(examples[i, :, :, :])
-	plt.savefig('cgan_500.png')
+	plt.savefig('plots/cifar_cgan_1epochs.png')
     
 show_plot(X, 10)

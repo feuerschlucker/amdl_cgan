@@ -75,6 +75,7 @@ print(processed_labels.size)
 n_classes = np.unique(processed_labels).size
 print(n_classes)
 processed_labels = to_categorical(processed_labels, num_classes=n_classes)
+print(processed_labels)
 
 # Save processed dataset for GAN training
 np.savez_compressed('processed_dataset.npz', images=processed_images, labels=processed_labels)

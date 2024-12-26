@@ -277,7 +277,7 @@ def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=100, n_batc
 			print('Epoch>%d, Batch%d/%d, d1=%.3f, d2=%.3f g=%.3f' %
 				(i+1, j+1, bat_per_epo, d_loss_real, d_loss_fake, g_loss))
 	# save the generator model
-	g_model.save('cifar_conditional_generator_500epochs.keras')
+	g_model.save('models/cifar_conditional_generator_1epochs.keras')
 
 #Train the GAN
 
@@ -294,7 +294,7 @@ gan_model = define_gan(g_model, d_model)
 # load image data
 dataset = load_real_samples()
 # train model
-train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=500)
+train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=1)
 
 ##########################################################
 # Now, let us load the generator model and generate images
@@ -310,7 +310,7 @@ import numpy as np
 # ship, truck
 
 # load model
-model = load_model('cifar_conditional_generator_500epochs.keras')
+model = load_model('models/cifar_conditional_generator_1epochs.keras')
 
 # generate multiple images
 
@@ -329,7 +329,7 @@ def show_plot(examples, n):
 		plt.subplot(n, n, 1 + i)
 		plt.axis('off')
 		plt.imshow(examples[i, :, :, :])
-	plt.show()
+	plt.savefig('cifar_cgan_1epoch.png')
     
 show_plot(X, 10)
 
