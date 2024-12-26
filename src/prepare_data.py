@@ -9,7 +9,7 @@ image_dir = '/home/hroethl/amdl_cgan/data/train_cropped/images'
 label_file = '/home/hroethl/amdl_cgan/data/train_cropped/train.mat'  
 
 
-output_size = (28, 50)  # Target size for images
+output_size = ( 50,28)  # Target size for images
 cutoff = 800  # Minimum pixel area
 
 # Load labels from .mat file
@@ -71,10 +71,11 @@ processed_labels = np.array(processed_labels, dtype=np.int32)
 print(len(processed_images))
 print(processed_labels.size)
 
+print(processed_images[10].shape)
 # One-hot encode labels
 n_classes = np.unique(processed_labels).size
 print(n_classes)
-processed_labels = to_categorical(processed_labels, num_classes=n_classes)
+#processed_labels = to_categorical(processed_labels, num_classes=n_classes)
 print(processed_labels)
 
 # Save processed dataset for GAN training
