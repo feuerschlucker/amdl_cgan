@@ -7,7 +7,7 @@ tf/
 
 data/
 *.log
-*.keras
+
 *.tmp
 *.bak
 *~
