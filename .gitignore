@@ -1,7 +1,7 @@
 # Python
 __pycache__/
 *.py[cod]
-*.npz
+git 
 tf/
 */tf/
 
@@ -11,7 +11,7 @@ data/
 *.tmp
 *.bak
 *~
-*.png
+
 *.mat
 *.npz
 .vscode/
