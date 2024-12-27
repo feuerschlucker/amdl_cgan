@@ -23,19 +23,19 @@ def generate_latent_points(latent_dim, n_samples, n_classes=10):
 # plot the result (10 sets of images, all images in a column should be of same class in the plot)
 # Plot generated images 
 def show_plot(examples, n):
-	plt.figure(figsize=(10, 4))
+	plt.figure(figsize=(13, 4))
 	for i in range(30):
 		plt.subplot(3, 10, 1 + i)
 		plt.axis('off')
 		plt.imshow(examples[i, :, :, :])
 	plt.tight_layout()
-	plt.savefig('plots/FN_20epochs.png')
+	plt.savefig('plots/FN_50epochs.png')
     
 
 
 def main():
     # load model
-	model = load_model('models/FN_20epochs.keras')
+	model = load_model('models/FN_50epochs.keras')
 	latent_points = generate_latent_points(100,30)
 	#print(labels)
 	labels = asarray([x for _ in range(3) for x in range(10)])

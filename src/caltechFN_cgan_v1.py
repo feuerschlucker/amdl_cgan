@@ -108,9 +108,6 @@ def define_gan(g_model, d_model):
 	d_model.trainable = False  #Discriminator is trained separately. So set to not trainable.
 	gen_noise, gen_label = g_model.input  #Latent vector size and label size
 	gen_output = g_model.output  #28x50x3
-	print('xxxxxxxxxxxxxx')
-	print(g_model.output.shape)
-	print(g_model.input)
 	gan_output = d_model([gen_output, gen_label])
 	model = Model([gen_noise, gen_label], gan_output)
 	opt = Adam(learning_rate=0.0002, beta_1=0.5)
@@ -146,23 +143,78 @@ def generate_fake_samples(generator, latent_dim, n_samples):
 	return [images, labels_input], y
 
 
-def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=100, n_batch=128):
-	bat_per_epo = int(dataset[0].shape[0] / n_batch)
-	half_batch = int(n_batch / 2)  #the discriminator model is updated for a half batch of real samples 
-	for i in range(n_epochs):
-		for j in range(bat_per_epo):
-			[X_real, labels_real], y_real = generate_real_samples(dataset, half_batch)
-			d_loss_real, _ = d_model.train_on_batch([X_real, labels_real], y_real)
-			[X_fake, labels], y_fake = generate_fake_samples(g_model, latent_dim, half_batch)
-			d_loss_fake, _ = d_model.train_on_batch([X_fake, labels], y_fake)
-			[z_input, labels_input] = generate_latent_points(latent_dim, n_batch)
-			y_gan = ones((n_batch, 1))
-			g_loss = gan_model.train_on_batch([z_input, labels_input], y_gan)
-			print('Epoch>%d, Batch%d/%d, d1=%.3f, d2=%.3f g=%.3f' %
-				(i+1, j+1, bat_per_epo, d_loss_real, d_loss_fake, g_loss))
-	g_model.save('models/FN_1epochs.keras')
+# def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=100, n_batch=128):
+# 	bat_per_epo = int(dataset[0].shape[0] / n_batch)
+# 	half_batch = int(n_batch / 2)  #the discriminator model is updated for a half batch of real samples 
+# 	for i in range(n_epochs):
+# 		for j in range(bat_per_epo):
+# 			[X_real, labels_real], y_real = generate_real_samples(dataset, half_batch)
+# 			d_loss_real, _ = d_model.train_on_batch([X_real, labels_real], y_real)
+# 			[X_fake, labels], y_fake = generate_fake_samples(g_model, latent_dim, half_batch)
+# 			d_loss_fake, _ = d_model.train_on_batch([X_fake, labels], y_fake)
+# 			[z_input, labels_input] = generate_latent_points(latent_dim, n_batch)
+# 			y_gan = ones((n_batch, 1))
+# 			g_loss = gan_model.train_on_batch([z_input, labels_input], y_gan)
+# 			print('Epoch>%d, Batch%d/%d, d1=%.3f, d2=%.3f g=%.3f' %
+# 				(i+1, j+1, bat_per_epo, d_loss_real, d_loss_fake, g_loss))
+# 	g_model.save('models/FN_300epochs.keras')
 
+def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=5, n_batch=1024):
+    bat_per_epo = int(dataset[0].shape[0] / n_batch)
+    half_batch = int(n_batch / 2)
+    
+    # To store losses
+    d_real_loss_hist, d_fake_loss_hist, g_loss_hist = [], [], []
 
+    for i in range(n_epochs):
+        d_real_loss, d_fake_loss, g_loss = 0, 0, 0  # Track cumulative losses for the epoch
+
+        for j in range(bat_per_epo):
+            # Generate real samples
+            [X_real, labels_real], y_real = generate_real_samples(dataset, half_batch)
+            d_loss_real, _ = d_model.train_on_batch([X_real, labels_real], y_real)
+
+            # Generate fake samples
+            [X_fake, labels], y_fake = generate_fake_samples(g_model, latent_dim, half_batch)
+            d_loss_fake, _ = d_model.train_on_batch([X_fake, labels], y_fake)
+
+            # Generate latent points for the generator
+            [z_input, labels_input] = generate_latent_points(latent_dim, n_batch)
+            y_gan = ones((n_batch, 1))
+            g_loss_batch = gan_model.train_on_batch([z_input, labels_input], y_gan)
+
+            # Aggregate losses
+            d_real_loss += d_loss_real
+            d_fake_loss += d_loss_fake
+            g_loss += g_loss_batch
+
+        # Calculate average losses for the epoch
+        d_real_loss /= bat_per_epo
+        d_fake_loss /= bat_per_epo
+        g_loss /= bat_per_epo
+
+        # Save losses
+        d_real_loss_hist.append(d_real_loss)
+        d_fake_loss_hist.append(d_fake_loss)
+        g_loss_hist.append(g_loss)
+
+        print(f'Epoch>{i+1}, d1={d_real_loss:.3f}, d2={d_fake_loss:.3f}, g={g_loss:.3f}')
+
+    # Save the generator model
+    g_model.save('models/FN_Xepochs.keras')
+
+    # Plot losses
+    plt.figure(figsize=(10, 6))
+    plt.plot(d_real_loss_hist, label='Discriminator Real Loss')
+    plt.plot(d_fake_loss_hist, label='Discriminator Fake Loss')
+    plt.plot(g_loss_hist, label='Generator Loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.title('Losses Over Training')
+    plt.legend()
+    plt.savefig('plots/loss_plot_Xepochs.png')
+    plt.show()
+    
 
 def main():
     latent_dim = 100
@@ -178,9 +230,9 @@ def main():
     print("Dataset images shape:", dataset[0].shape)  # Should be (num_samples, 28, 50, 3)
     print("Dataset labels shape:", dataset[1].shape)  
     t1=time.time()
-    train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=20)
+    train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=1)
     print(time.time()-t1)
-    showsamples()
+    #showsamples()
 
     print("main")
     pass
