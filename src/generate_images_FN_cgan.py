@@ -7,6 +7,7 @@ from numpy.random import randint
 from keras.models import load_model
 import numpy as np
 from matplotlib import pyplot as plt
+import cv2
 # 
 
 # generate points in latent space as input for the generator
@@ -27,15 +28,15 @@ def show_plot(examples, n):
 	for i in range(30):
 		plt.subplot(3, 10, 1 + i)
 		plt.axis('off')
-		plt.imshow(examples[i, :, :, :])
+		plt.imshow(cv2.transpose(examples[i, :, :, :]))
 	plt.tight_layout()
-	plt.savefig('plots/FN_50epochs.png')
+	plt.savefig('plots/FN_balanced_100epochs.png')
     
 
 
 def main():
     # load model
-	model = load_model('models/FN_50epochs.keras')
+	model = load_model('models/FN_balanced_100epochs.keras')
 	latent_points = generate_latent_points(100,30)
 	#print(labels)
 	labels = asarray([x for _ in range(3) for x in range(10)])

@@ -117,7 +117,7 @@ def define_gan(g_model, d_model):
 
 def load_real_samples():
     # Load the preprocessed dataset
-    data = np.load('processed_dataset.npz')
+    data = np.load('balanced_dataset.npz')
     images = data['images']
     labels = data['labels']
     return [images, labels]
@@ -159,7 +159,7 @@ def generate_fake_samples(generator, latent_dim, n_samples):
 # 				(i+1, j+1, bat_per_epo, d_loss_real, d_loss_fake, g_loss))
 # 	g_model.save('models/FN_300epochs.keras')
 
-def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=5, n_batch=1024):
+def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=5, n_batch=128):
     bat_per_epo = int(dataset[0].shape[0] / n_batch)
     half_batch = int(n_batch / 2)
     
@@ -187,6 +187,7 @@ def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=5, n_batch=
             d_real_loss += d_loss_real
             d_fake_loss += d_loss_fake
             g_loss += g_loss_batch
+            print(f'Epoch : {i+1} , Batch : {j+1}')
 
         # Calculate average losses for the epoch
         d_real_loss /= bat_per_epo
@@ -201,7 +202,7 @@ def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=5, n_batch=
         print(f'Epoch>{i+1}, d1={d_real_loss:.3f}, d2={d_fake_loss:.3f}, g={g_loss:.3f}')
 
     # Save the generator model
-    g_model.save('models/FN_Xepochs.keras')
+    g_model.save('models/FN_balanced_100epochs.keras')
 
     # Plot losses
     plt.figure(figsize=(10, 6))
@@ -212,7 +213,7 @@ def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=5, n_batch=
     plt.ylabel('Loss')
     plt.title('Losses Over Training')
     plt.legend()
-    plt.savefig('plots/loss_plot_Xepochs.png')
+    plt.savefig('plots/loss_plot_100epochs.png')
     plt.show()
     
 
@@ -230,7 +231,7 @@ def main():
     print("Dataset images shape:", dataset[0].shape)  # Should be (num_samples, 28, 50, 3)
     print("Dataset labels shape:", dataset[1].shape)  
     t1=time.time()
-    train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=1)
+    train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=100)
     print(time.time()-t1)
     #showsamples()
 

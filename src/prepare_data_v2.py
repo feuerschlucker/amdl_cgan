@@ -11,7 +11,7 @@ def show_plot(images, labels, n):
         plt.subplot(3, 10, 1 + i)
         plt.axis('off')
         plt.title(f'{labels[i]}')
-        plt.imshow((images[i, :, :, :] + 1) / 2.0)
+        plt.imshow(cv2.transpose(images[i, :, :, :] + 1) / 2.0) 
     plt.tight_layout()
     plt.savefig('plots/random_test.png')
 
@@ -102,6 +102,7 @@ def main():
                 
                 # Resize to target size
                 image = cv2.resize(image, output_size)
+                image = cv2.transpose(image)
                 
                 # Normalize image to [-1, 1]
                 image = (image / 127.5) - 1.0

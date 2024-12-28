@@ -4,22 +4,15 @@ import numpy as np
 import scipy.io as sio
 from matplotlib import pyplot as plt
 
-
-
 def show_plot(images,labels, n):
     plt.figure(figsize=(13,6))
     for i in range(30):
         plt.subplot(3, 10, 1 + i)
         plt.axis('off')
         plt.title(f'{labels[i]}')
-        plt.imshow(images[i, :, :, :])
+        plt.imshow(cv2.transpose(images[i, :, :, :] + 1) / 2.0)
     plt.tight_layout()
     plt.savefig('plots/random_test.png')
-
-
-
-
-
 
 def main():
     
@@ -71,6 +64,7 @@ def main():
                 
                 # Resize to target size
                 image = cv2.resize(image, output_size)
+                image = cv2.transpose(image)
                 
                 # Normalize image to [-1, 1]
                 image = (image / 127.5) - 1.0
@@ -89,18 +83,12 @@ def main():
     processed_images = np.array(processed_images, dtype=np.float32)
     processed_labels = np.array(processed_labels, dtype=np.int32)
 
-    
-
-
-
     n_classes = np.unique(processed_labels).size
     print(n_classes)
 
     plt.hist(processed_labels)
     plt.savefig('plots/train_data_hist_labels.png')
     plt.close()
-
-
 
     no_images = len(processed_images)
     print(f'Size 2 batches  = {no_images}')
@@ -111,11 +99,8 @@ def main():
     show_plot(images,labels,30)
 
     # Save processed dataset for GAN training
-    # np.savez_compressed('processed_dataset_test.npz', images=processed_images, labels=processed_labels)
+    np.savez_compressed('processed_dataset_merged.npz', images=processed_images, labels=processed_labels)
     print("Processed dataset saved to 'processed_dataset.npz'.")
-
-
-
 
 if __name__ =='__main__':
      main()
