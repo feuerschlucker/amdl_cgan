@@ -30,13 +30,13 @@ def show_plot(examples, n):
 		plt.axis('off')
 		plt.imshow(cv2.transpose(examples[i, :, :, :]))
 	plt.tight_layout()
-	plt.savefig('plots/FN_balanced_30epochs_double_gen.png')
+	plt.savefig('plots/FN_balanced_X1epochs.png')
     
 
 
 def main():
     # load model
-	model = load_model('models/FN_balanced_30epochs_double_gen.keras')
+	model = load_model('models/FN_balanced_X1epochs.keras')
 	latent_points = generate_latent_points(100,30)
 	#print(labels)
 	labels = asarray([x for _ in range(3) for x in range(10)])

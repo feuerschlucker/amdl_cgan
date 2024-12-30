@@ -63,6 +63,10 @@ def main():
 
     image_dirs = [image_dir0, image_dir1]
     label_files = [label_file0, label_file1]
+    
+    
+    image_dirs = [image_dir0]
+    label_files = [label_file0]
 
     output_size = (28, 50)  # Target size for images
     cutoff = 800  # Minimum pixel area
@@ -145,8 +149,8 @@ def main():
     show_plot(images, labels, 30)
 
     # Save balanced dataset for GAN training
-    np.savez_compressed('balanced_dataset.npz', images=balanced_images, labels=balanced_labels)
-    print("Balanced dataset saved to 'balanced_dataset.npz'.")
+    np.savez_compressed('balanced_dataset_train.npz', images=balanced_images, labels=balanced_labels)
+    print("saved ")
 
 if __name__ == '__main__':
     main()

@@ -60,7 +60,7 @@ def define_discriminator(in_shape=(28, 50, 3), n_classes=10):
 
     # Define the model
     model = Model([in_image, in_label], out_layer)
-    opt = Adam(learning_rate=0.0002, beta_1=0.5)
+    opt = Adam(learning_rate=0.0001, beta_1=0.5)
     model.compile(loss='binary_crossentropy', optimizer=opt, metrics=['accuracy'])
     return model
 
@@ -76,7 +76,7 @@ def define_generator(latent_dim, n_classes=10):
     li = Dense(n_nodes)(li)  # Shape = (batch_size, 14*25*128)
     li = LeakyReLU(alpha=0.2)(li)
     li = Reshape((14, 25, 128))(li)  # Reshape to (batch_size, 14, 25, 128)
-
+    
     # Latent vector input
     in_lat = Input(shape=(latent_dim,))  # Shape (batch_size, latent_dim)
 
@@ -92,7 +92,7 @@ def define_generator(latent_dim, n_classes=10):
     # Upsample and generate the image
     gen = Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same')(merge)  # Shape (batch_size, 28, 50, 128)
     gen = LeakyReLU(alpha=0.2)(gen)
-
+    gen = Dropout(0.3)(gen)
     out_layer = Conv2DTranspose(3, (3, 3), activation='tanh', padding='same')(gen)  # Shape (batch_size, 28, 50, 3)
 
     # Define the model
@@ -110,7 +110,7 @@ def define_gan(g_model, d_model):
 	gen_output = g_model.output  #28x50x3
 	gan_output = d_model([gen_output, gen_label])
 	model = Model([gen_noise, gen_label], gan_output)
-	opt = Adam(learning_rate=0.0002, beta_1=0.5)
+	opt = Adam(learning_rate=0.0001, beta_1=0.5)
 	model.compile(loss='binary_crossentropy', optimizer=opt)
 	return model
 
@@ -202,7 +202,7 @@ def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=5, n_batch=
         print(f'Epoch>{i+1}, d1={d_real_loss:.3f}, d2={d_fake_loss:.3f}, g={g_loss:.3f}')
 
     # Save the generator model
-    g_model.save('models/FN_balanced_100epochs.keras')
+    g_model.save('models/FN_balanced_Xepochs_0001.keras')
 
     # Plot losses
     plt.figure(figsize=(10, 6))
@@ -213,7 +213,7 @@ def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=5, n_batch=
     plt.ylabel('Loss')
     plt.title('Losses Over Training')
     plt.legend()
-    plt.savefig('plots/loss_plot_100epochs.png')
+    plt.savefig('plots/loss_plot_Xepochs_0001.png')
     plt.show()
     
 
@@ -231,7 +231,7 @@ def main():
     print("Dataset images shape:", dataset[0].shape)  # Should be (num_samples, 28, 50, 3)
     print("Dataset labels shape:", dataset[1].shape)  
     t1=time.time()
-    train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=100)
+    train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=300)
     print(time.time()-t1)
     #showsamples()
 

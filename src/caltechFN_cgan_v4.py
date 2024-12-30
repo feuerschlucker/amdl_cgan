@@ -186,7 +186,7 @@ def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=5, n_batch=
         print(f'Epoch>{i+1}, d1={d_real_loss:.3f}, d2={d_fake_loss:.3f}, g={g_loss:.3f}')
 
     # Save the generator model
-    g_model.save('models/FN_balanced_30epochs_xxx.keras')
+    g_model.save('models/FN_balanced_30epochs_reg.keras')
 
     # Plot losses
     plt.figure(figsize=(10, 6))
@@ -197,7 +197,7 @@ def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=5, n_batch=
     plt.ylabel('Loss')
     plt.title('Losses Over Training')
     plt.legend()
-    plt.savefig('plots/loss_plot_30epochs_xxx.png')
+    plt.savefig('plots/loss_plot_30epochs_reg.png')
     plt.show()
     
 
@@ -215,7 +215,7 @@ def main():
     print("Dataset images shape:", dataset[0].shape)  # Should be (num_samples, 28, 50, 3)
     print("Dataset labels shape:", dataset[1].shape)  
     t1=time.time()
-    train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=2)
+    train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=30)
     print(time.time()-t1)
     #showsamples()
 
